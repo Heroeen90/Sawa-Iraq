@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: sawa_iraq_database
+    environment:
+      POSTGRES_USER: sawa_admin
+      POSTGRES_PASSWORD: IraqSuperSecretPassword2026
+      POSTGRES_DB: sawa_saas_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sawa_admin -d sawa_saas_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend_api:
+    build: .
+    container_name: sawa_saas_backend_api
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://sawa_admin:IraqSuperSecretPassword2026@postgres_db:5432/sawa_saas_db
+      - JWT_SECRET_KEY=9a1f73bcf41865c3de75239fb8bf4ef5b47de8b65287f3ee1c7d37efbe0907ee
+      - ALGORITHM=HS256
+      - COMMISSION_PERCENTAGE_TAXI=10.0
+      - COMMISSION_PERCENTAGE_TOKTOK=5.0
+      - ASIA_CELL_GATEWAY_URL=https://api.asiacell.com/v1/mock-pay
+      - ZAIN_CASH_GATEWAY_URL=https://api.zaincash.iq/v2/mock-pay
+    restart: always
+
+volumes:
+  postgres_data:

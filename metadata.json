@@ -1,0 +1,6 @@
+{
+  "name": "Sawa Iraq",
+  "description": "An all-in-one SaaS Super App designed for the Iraqi market. Taxi, Toktok, Towing, Gas delivery, RO Water and local vendor services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
